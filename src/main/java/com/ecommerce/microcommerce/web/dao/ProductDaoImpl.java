@@ -10,10 +10,10 @@ import java.util.List;
 public class ProductDaoImpl implements ProductDao{
     public static List<Product> products = new ArrayList<>();
     static {
-        products.add(new Product(1, new String("PC Toshiba"), 890));
-        products.add(new Product(2, new String("PC HP Elite Book"), 990));
-        products.add(new Product(3, new String("PC Dell"), 760));
-        products.add(new Product(4, new String("PC Acer"), 670));
+        products.add(new Product(1, new String("PC Toshiba"), 890,320));
+        products.add(new Product(2, new String("PC HP Elite Book"), 990, 420));
+        products.add(new Product(3, new String("PC Dell"), 760, 280));
+        products.add(new Product(4, new String("PC Acer"), 670, 189));
     }
 
     @Override
