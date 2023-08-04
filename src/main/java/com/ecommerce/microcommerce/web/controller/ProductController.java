@@ -2,16 +2,26 @@ package com.ecommerce.microcommerce.web.controller;
 
 
 import com.ecommerce.microcommerce.model.Product;
+import com.ecommerce.microcommerce.web.dao.ProductDao;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController//Indicat Rest controller
 public class ProductController {
 
-    @GetMapping("/Produits")//url permettand d'atteindre la methode et le verbe Get
-    public String listProduits(){
-        return "Liste de nos produits Test";
+    private final ProductDao productDao;
+
+    public ProductController(ProductDao productDao) {
+        this.productDao = productDao;
+    }
+
+
+    @GetMapping("/Produits")
+    public List<Product> productList(){
+        return productDao.findAll();
     }
 
     @GetMapping("/Home")
@@ -19,13 +29,8 @@ public class ProductController {
         return "My home page";
     }
 
-    /*@GetMapping("/Produits/{id}")//Ajout d'un param à url
-    public String getProductById(@PathVariable int id){
-        return "You have requested the product id : " + id;
-    }*/
-
     @GetMapping("/Produits/{id}")//Ajout d'un param à url
     public Product getProductById(@PathVariable int id){
-        return new Product(1, new String("PC Elite Book"), 890);
+        return productDao.findById(id);
     }
 }
