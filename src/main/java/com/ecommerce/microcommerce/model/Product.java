@@ -1,14 +1,28 @@
 package com.ecommerce.microcommerce.model;
 
+
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+//@JsonIgnoreProperties(value = {"id", "prixAchat"})//permet de cacher les infos à ne pas exposer dans notre json
+@JsonFilter("myDynamicFilter")//Gestion des infos à cacher de façon dynamique
 public class Product {
     private int id;
     private String nom;
     private int prix;
+    //Info non exposée
+    private int prixAchat;
 
-    public Product(int id, String nom, int prix) {
+
+    //Constructeur vide
+    public Product() {
+    }
+
+    public Product(int id, String nom, int prix, int prixAchat) {
         this.id = id;
         this.nom = nom;
         this.prix = prix;
+        this.prixAchat = prixAchat;
     }
 
     public int getId() {
@@ -33,6 +47,14 @@ public class Product {
 
     public void setPrix(int prix) {
         this.prix = prix;
+    }
+
+    public int getPrixAchat() {
+        return prixAchat;
+    }
+
+    public void setPrixAchat(int prixAchat) {
+        this.prixAchat = prixAchat;
     }
 
     @Override
