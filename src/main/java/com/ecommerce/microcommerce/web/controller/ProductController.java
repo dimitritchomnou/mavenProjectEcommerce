@@ -6,6 +6,7 @@ import com.ecommerce.microcommerce.web.dao.ProductDao;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,8 @@ import java.util.*;
 @RestController//Indicat Rest controller
 public class ProductController {
 
-    private final ProductDao productDao;
+    @Autowired
+    private ProductDao productDao;
 
     public ProductController(ProductDao productDao) {
         this.productDao = productDao;
@@ -27,7 +29,8 @@ public class ProductController {
     @GetMapping("/Produits")
     public MappingJacksonValue productList(){
         //return productDao.findAll();
-        List<Product> listProduct = productDao.findAll();
+        //List<Product> listProduct = productDao.findAll();
+        Iterable<Product> listProduct = productDao.findAll();
 
         //Si on a un seule champs à ignorer
         /*SimpleBeanPropertyFilter myFilter = SimpleBeanPropertyFilter.serializeAllExcept("prixAchat");
@@ -49,6 +52,34 @@ public class ProductController {
     public Product getProductById(@PathVariable int id){
         return productDao.findById(id);
     }
+
+    @GetMapping("find/produits/{prixLimit}")
+    public List<Product> returnProductsGreaterThan(@PathVariable int prixLimit){
+        //return productDao.findByPrixGreaterThan(prixLimit);
+        //Use query
+        return productDao.useQueryToFindById(prixLimit);
+    }
+
+    @DeleteMapping("/Produits/{id}")
+    public String deleteProductById(@PathVariable int id){
+        productDao.deleteById(id);
+        return "Product was deleted...";
+    }
+
+    @PutMapping("/Produits/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable int id, @RequestBody Product product){
+        //find product to update
+        Product productToUpdate = productDao.findById(id);
+        if(productToUpdate != null){
+            productToUpdate.setNom(product.getNom());
+            productToUpdate.setPrix(product.getPrix());
+            productToUpdate.setPrixAchat(product.getPrixAchat());
+            productDao.save(productToUpdate);//save modifications
+            return ResponseEntity.ok(productToUpdate);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
 
     //renvoi code 200
     /*@PostMapping(value = "/Produits")
