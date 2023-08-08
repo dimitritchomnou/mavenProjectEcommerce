@@ -4,9 +4,14 @@ package com.ecommerce.microcommerce.model;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 //@JsonIgnoreProperties(value = {"id", "prixAchat"})//permet de cacher les infos à ne pas exposer dans notre json
-@JsonFilter("myDynamicFilter")//Gestion des infos à cacher de façon dynamique
+//@JsonFilter("myDynamicFilter")//Gestion des infos à cacher de façon dynamique
+@Entity
 public class Product {
+    @Id//primary key
     private int id;
     private String nom;
     private int prix;
