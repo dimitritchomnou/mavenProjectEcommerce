@@ -3,6 +3,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.model.Product;
 import com.ecommerce.microcommerce.web.dao.ProductDao;
+import com.ecommerce.microcommerce.web.exceptions.ProduitNotFindException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -12,6 +13,7 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.*;
 
@@ -50,7 +52,9 @@ public class ProductController {
 
     @GetMapping("/Produits/{id}")//Ajout d'un param à url
     public Product getProductById(@PathVariable int id){
-        return productDao.findById(id);
+        Product product = productDao.findById(id);
+        if(product == null) throw new ProduitNotFindException("Product with id " + id + " Not find");
+        return product;
     }
 
     @GetMapping("find/produits/{prixLimit}")
@@ -67,7 +71,7 @@ public class ProductController {
     }
 
     @PutMapping("/Produits/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable int id, @RequestBody Product product){
+    public ResponseEntity<Product> updateProduct(@PathVariable int id, @Valid @RequestBody Product product){
         //find product to update
         Product productToUpdate = productDao.findById(id);
         if(productToUpdate != null){
@@ -89,7 +93,7 @@ public class ProductController {
 
     //Pesonnalisation reponse(201)
     @PostMapping(value = "/Produits")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+    public ResponseEntity<Product> addProduct(@Valid @RequestBody Product product) {//@valid pout la validation des inputs
         Product productToAdd = productDao.save(product);
         if (Objects.isNull(productToAdd)) {
             return ResponseEntity.noContent().build();//return 202 code

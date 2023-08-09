@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 //@JsonIgnoreProperties(value = {"id", "prixAchat"})//permet de cacher les infos à ne pas exposer dans notre json
 //@JsonFilter("myDynamicFilter")//Gestion des infos à cacher de façon dynamique
@@ -13,9 +15,12 @@ import javax.persistence.Id;
 public class Product {
     @Id//primary key
     private int id;
+    @Size(min = 3, max = 25)//Validation input
     private String nom;
+    @Min(value = 1)
     private int prix;
     //Info non exposée
+    @Min(value = 1)
     private int prixAchat;
 
 
