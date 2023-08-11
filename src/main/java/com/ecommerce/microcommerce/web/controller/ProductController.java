@@ -7,6 +7,8 @@ import com.ecommerce.microcommerce.web.exceptions.ProduitNotFindException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -17,6 +19,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.*;
 
+
+@Api("API, Manager all operation off CRUD for product")//Swagger : Add description
 @RestController//Indicat Rest controller
 public class ProductController {
 
@@ -28,6 +32,7 @@ public class ProductController {
     }
 
 
+    @ApiOperation(value = "List all products")
     @GetMapping("/Produits")
     public MappingJacksonValue productList(){
         //return productDao.findAll();
@@ -45,11 +50,13 @@ public class ProductController {
         return  productsFilted;
     }
 
+    @ApiOperation(value = "Home page")
     @GetMapping("/Home")
     public String homePage(){
         return "My home page";
     }
 
+    @ApiOperation(value = "Find product by id")
     @GetMapping("/Produits/{id}")//Ajout d'un param à url
     public Product getProductById(@PathVariable int id){
         Product product = productDao.findById(id);
@@ -64,12 +71,14 @@ public class ProductController {
         return productDao.useQueryToFindById(prixLimit);
     }
 
+    @ApiOperation( value = "Delete product")
     @DeleteMapping("/Produits/{id}")
     public String deleteProductById(@PathVariable int id){
         productDao.deleteById(id);
         return "Product was deleted...";
     }
 
+    @ApiOperation( value = "Update product")
     @PutMapping("/Produits/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable int id, @Valid @RequestBody Product product){
         //find product to update
@@ -92,6 +101,7 @@ public class ProductController {
     }*/
 
     //Pesonnalisation reponse(201)
+    @ApiOperation(value = "Add product to list")
     @PostMapping(value = "/Produits")
     public ResponseEntity<Product> addProduct(@Valid @RequestBody Product product) {//@valid pout la validation des inputs
         Product productToAdd = productDao.save(product);
