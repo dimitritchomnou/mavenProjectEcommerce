@@ -3,6 +3,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.model.Product;
 import com.ecommerce.microcommerce.web.dao.ProductDao;
+import com.ecommerce.microcommerce.web.exceptions.FreeProductException;
 import com.ecommerce.microcommerce.web.exceptions.ProduitNotFindException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.*;
 
@@ -38,7 +40,6 @@ public class ProductController {
         //return productDao.findAll();
         //List<Product> listProduct = productDao.findAll();
         Iterable<Product> listProduct = productDao.findAll();
-
         //Si on a un seule champs à ignorer
         /*SimpleBeanPropertyFilter myFilter = SimpleBeanPropertyFilter.serializeAllExcept("prixAchat");
         FilterProvider listAllProduct = new SimpleFilterProvider().addFilter("myDynamicFilter", myFilter);*/
@@ -48,6 +49,25 @@ public class ProductController {
         MappingJacksonValue productsFilted = new MappingJacksonValue(listProduct);
         productsFilted.setFilters(listAllProduct);
         return  productsFilted;
+    }
+
+    @ApiOperation(value = "Get marging of product")
+    @GetMapping("/AdminProduits")
+    public HashMap<String, Integer> getProductMargin(){
+        HashMap<String, Integer> listProductMarging = new HashMap<>();
+        List<Product> listProduit = productDao.findAll();
+        for (Product line : listProduit){
+            if(line.getPrix() == 0 ) throw new FreeProductException("Le prix de vente doit être supérieur à 0 ");
+            listProductMarging.put(""+line,line.getPrix() - line.getPrixAchat());
+        }
+        return listProductMarging;
+    }
+
+    @ApiOperation(value = "Sort products oder by nom asc")
+    @GetMapping("/OrderProduct")
+    public List<Product> productListSort(){
+        List<Product> listProduct = productDao.sortProductByAlphabetiqueOrder();//Trie par ordre alphabetique
+        return listProduct;
     }
 
     @ApiOperation(value = "Home page")
